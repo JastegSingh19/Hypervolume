@@ -193,6 +193,21 @@ pub fn run_benchmark(max: usize, runs: usize, parallel_depth: usize) -> Vec<Benc
             t_parallel.push(t.elapsed().as_secs_f64() * 1000.0);
         }
 
+        let serial_str = t_serial
+            .iter()
+            .map(|v| format!("{v:.3}"))
+            .collect::<Vec<_>>()
+            .join(", ");
+        let parallel_str = t_parallel
+            .iter()
+            .map(|v| format!("{v:.3}"))
+            .collect::<Vec<_>>()
+            .join(", ");
+        println!(
+            "  Dim={} runs: serial=[{}] ms | parallel=[{}] ms",
+            dim, serial_str, parallel_str
+        );
+
         let r = BenchmarkResult {
             dimension: dim,
             hv: hv_serial,

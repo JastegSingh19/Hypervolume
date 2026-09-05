@@ -242,6 +242,21 @@ fn hypervolume_2d(points: &PointSet, reference_point: &Point) -> f64 {
     hv
 }
 
+fn print_run_data(label: &str, serial: &[f64], parallel: &[f64]) {
+    let serial_str = serial
+        .iter()
+        .map(|v| format!("{v:.3}"))
+        .collect::<Vec<_>>()
+        .join(", ");
+    let parallel_str = parallel
+        .iter()
+        .map(|v| format!("{v:.3}"))
+        .collect::<Vec<_>>()
+        .join(", ");
+
+    println!("  {} runs: serial=[{}] ms | parallel=[{}] ms", label, serial_str, parallel_str);
+}
+
 fn mean_and_std(v: &[f64]) -> (f64, f64) {
     let n = v.len();
     if n == 0 {
@@ -315,6 +330,8 @@ pub fn run_benchmark_grid(parallel_depth: usize) -> Vec<BenchmarkResult> {
                 calculate_hv_parallel(&pts, &reference, parallel_depth);
                 t_parallel.push(t.elapsed().as_secs_f64() * 1000.0);
             }
+
+            print_run_data(&format!("Dim={} N={}", dim, n), &t_serial, &t_parallel);
 
             let (s_mean, s_std) = mean_and_std(&t_serial);
             let (p_mean, p_std) = mean_and_std(&t_parallel);
